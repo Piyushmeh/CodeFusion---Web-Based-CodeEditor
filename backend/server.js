@@ -25,14 +25,24 @@ import Project from './models/Project.js';
 const app = express();
 const server = http.createServer(app);
 
-const clientOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+].filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
 
 const io = new Server(server, {
-  cors: {
-    origin: clientOrigin,
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
+  cors: corsOptions,
   maxHttpBufferSize: 1e6,
   pingTimeout: 60_000,
 });
@@ -40,12 +50,7 @@ const io = new Server(server, {
 setupSocketHandler(io);
 
 app.use(helmet());
-app.use(
-  cors({
-    origin: clientOrigin,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
 
