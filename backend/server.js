@@ -59,7 +59,7 @@ app.get('/api/health', (req, res) =>
   res.json({ status: 'ok', compiler: 'local', realtime: 'socket.io' })
 );
 
-app.get('/api/debug-cpp', (req, res) => {
+app.get('/api/xdebug-cpp-check', (req, res) => {
   exec('which g++ && g++ --version && ls /usr/include/bits/stdc++.h', (err, stdout, stderr) => {
     res.json({ err: err?.message, stdout, stderr });
   });
