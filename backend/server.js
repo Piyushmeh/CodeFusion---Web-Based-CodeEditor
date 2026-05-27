@@ -55,6 +55,12 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
 
+app.get('/xdebug-cpp', (req, res) => {
+  exec('which g++ && g++ --version', (err, stdout, stderr) => {
+    res.json({ err: err?.message, stdout, stderr });
+  });
+});
+
 app.get('/api/health', (req, res) =>
   res.json({ status: 'ok', compiler: 'local', realtime: 'socket.io' })
 );
