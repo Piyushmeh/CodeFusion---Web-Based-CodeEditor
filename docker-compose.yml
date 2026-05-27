@@ -1,0 +1,15 @@
+# Local MongoDB for development (use when Atlas mongodb+srv fails on your network)
+# Run: docker compose up -d
+# Then set in backend/.env: MONGODB_URI=mongodb://127.0.0.1:27017/codefusion
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: codefusion-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - codefusion_mongo_data:/data/db
+
+volumes:
+  codefusion_mongo_data:
