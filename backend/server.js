@@ -5,6 +5,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { Server } from 'socket.io';
+import { exec } from 'child_process';
 import connectDB from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 import { setupSocketHandler } from './socket/socketHandler.js';
@@ -57,6 +58,12 @@ app.use(morgan('dev'));
 app.get('/api/health', (req, res) =>
   res.json({ status: 'ok', compiler: 'local', realtime: 'socket.io' })
 );
+
+app.get('/api/debug-cpp', (req, res) => {
+  exec('which g++ && g++ --version && ls /usr/include/bits/stdc++.h', (err, stdout, stderr) => {
+    res.json({ err: err?.message, stdout, stderr });
+  });
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
